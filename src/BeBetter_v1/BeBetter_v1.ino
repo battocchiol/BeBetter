@@ -9,16 +9,14 @@ const int sensorPinTemperature = A0;
 char ssid[32] = "";
 char password[64] = "";
 char email[64] = "";
-float previousTemperature = 0; // Variabile globale per memorizzare l'ultimo valore di temperatura
-
 
 WiFiServer server(80);
 DNSServer dnsServer;
 
 IPAddress apIP(192, 168, 4, 3);
 
-#define SUPABASE_URL "SUPABASE_URL"
-#define SUPABASE_KEY "SUPABASE_KEY"
+#define SUPABASE_URL "https://adsas.supabase.co"
+#define SUPABASE_KEY "asddas.asdads"
 
 bool isIPConflict(IPAddress ip) {
   WiFiClient testClient;
@@ -240,24 +238,15 @@ void getSumFromSupabase() {
 }
 
 float readTemperature() {
-  int numSamples = 1000;
+  int numSamples = 50;
   float sum = 0;
   
   for (int i = 0; i < numSamples; i++) {
-    sum += analogRead(sensorPinTemperature);
-    delay(10);
+    sum += analogRead(sensorPinTemperature); 
+    delay(5);
   }
   
   float avgSensorValue = sum / numSamples;
-  float voltage = (avgSensorValue / 4095.0) * 5.0;  
-  float temperature = (voltage - 0.5) * 100; 
-  
-  // Controlla se la differenza con la temperatura precedente è maggiore di 2
-  if (previousTemperature > 0.0 && abs(temperature - previousTemperature) >= 2) {
-    // Se la differenza è maggiore o uguale a 2, rifai il calcolo
-    return readTemperature();
-  }
-  
-  previousTemperature = temperature; // Aggiorna il valore precedente
-  return temperature;
+  float voltage = (avgSensorValue / 4095.0) * 3.3;  // Se alimentato a 3.3V
+  return (voltage - 0.5) * 100;  
 }
